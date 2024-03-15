@@ -36,9 +36,9 @@ function App() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const videoOptions = {
-    width: 1920,
-    height: 1020,
-    facingMode: 'user',
+    width: 1280,
+    height: 720,
+    facingMode: 'environtment',
   };
 
   async function predict() {
@@ -53,29 +53,24 @@ function App() {
       newCanvas.height = webcamElement.videoHeight;
       const context = newCanvas.getContext('2d');
 
-      const scaleWidth = 0.8;
-      const scaleHeight = 0.8;
-
       const filteredDetection = detection.filter((result) => result.score >= minScore);
 
       if (filteredDetection.length > 0) {
         filteredDetection.forEach((result) => {
-          const scaledWidth = result.bbox[2] * scaleWidth;
-          const scaledHeight = result.bbox[3] * scaleHeight;
-
-          const newLeft = result.bbox[0] + (result.bbox[2] - scaledWidth) / 2;
-          const newTop = result.bbox[1] + (result.bbox[3] - scaledHeight) / 2;
+          const objX = result.bbox[0]; // Koordinat x pojok kiri atas objek
+          const objY = result.bbox[1]; // Koordinat y pojok kiri atas objek
+          const objWidth = result.bbox[2]; // Lebar objek
+          const objHeight = result.bbox[3]; // Tinggi objek
 
           context.beginPath();
-          context.rect(newLeft, newTop, scaledWidth, scaledHeight);
+          context.rect(objX, objY, objWidth, objHeight);
           context.lineWidth = 2;
           context.strokeStyle = 'white';
-          context.fillStyle = 'white';
           context.stroke();
           context.fillText(
             `${result.class} (${(result.score * 100).toFixed(2)}%)`,
-            newLeft,
-            newTop + 10
+            objX,
+            objY + 10
           );
         });
 
@@ -94,8 +89,8 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>ML WITH JESSY</h1>
+    <div className='App'>
+      <h1 className='h-App'>DETEKSI OBJEK</h1>
       <Webcam
         id="videoSource"
         audio={false}
@@ -104,6 +99,7 @@ function App() {
         screenshotFormat="image/jpeg"
         width={1360}
         videoConstraints={{ ...videoOptions, facingMode: 'user' }}
+        className='webcam'
       />
       {canvas && <img />}
       {detections.map((result, index) => (
@@ -115,14 +111,14 @@ function App() {
             top: result.bbox[1],
             width: result.bbox[2],
             height: result.bbox[3],
-            border: '2px solid orange',
+            border: '2px solid green',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <p style={{ margin: 0, padding: 5, color: 'orange' }}>
+          <p style={{ margin: 0, padding: 5, color: 'green' }}>
             {result.class} ({(result.score * 100).toFixed(2)}%)
           </p>
         </div>
