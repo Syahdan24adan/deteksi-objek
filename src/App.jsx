@@ -98,7 +98,7 @@ function App() {
         ref={null}
         screenshotFormat="image/jpeg"
         width={1360}
-        videoConstraints={{ ...videoOptions, facingMode: 'user' }}
+        videoConstraints={{ ...videoOptions, facingMode: 'environment' }}
         className='webcam'
       />
       {canvas && <img />}
